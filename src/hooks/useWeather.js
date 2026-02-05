@@ -1,0 +1,41 @@
+import { useState, useEffect, useCallback } from 'react'
+
+const BASE_URL = 'https://api.open-meteo.com/v1/forecast'
+
+export function useWeather(lat, lon) {
+  const [current, setCurrent] = useState(null)
+  const [daily, setDaily] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  const fetchWeather = useCallback(async () => {
+    if (lat == null || lon == null) return
+    setLoading(true)
+    setError(null)
+    try {
+      const params = new URLSearchParams({
+        latitude: lat,
+        longitude: lon,
+        current: 'temperature_2m,relative_humidity_2m,apparent_temperature,precipitation,weather_code,wind_speed_10m,wind_direction_10m',
+        daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,weather_code',
+        timezone: 'America/Panama',
+        forecast_days: 7,
+      })
+      const res = await fetch(`${BASE_URL}?${params}`)
+      if (!res.ok) throw new Error('Error al obtener datos del clima')
+      const data = await res.json()
+      setCurrent(data.current)
+      setDaily(data.daily)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [lat, lon])
+
+  useEffect(() => {
+    fetchWeather()
+  }, [fetchWeather])
+
+  return { current, daily, loading, error, refetch: fetchWeather }
+}
