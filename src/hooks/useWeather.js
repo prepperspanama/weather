@@ -7,6 +7,7 @@ export function useWeather(lat, lon) {
   const [daily, setDaily] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [retry, setRetry] = useState(0)
 
   const fetchWeather = useCallback(async () => {
     if (lat == null || lon == null) return
@@ -34,8 +35,11 @@ export function useWeather(lat, lon) {
   }, [lat, lon])
 
   useEffect(() => {
-    fetchWeather()
-  }, [fetchWeather])
+    const timer = setTimeout(fetchWeather, 0)
+    return () => clearTimeout(timer)
+  }, [fetchWeather, retry])
 
-  return { current, daily, loading, error, refetch: fetchWeather }
+  const refetch = useCallback(() => setRetry((n) => n + 1), [])
+
+  return { current, daily, loading, error, refetch }
 }
