@@ -3,12 +3,13 @@ import { panamaCities } from './utils/weatherCodes'
 import { useWeather } from './hooks/useWeather'
 import CitySelector from './components/CitySelector'
 import CurrentWeather from './components/CurrentWeather'
+import HourlyForecast from './components/HourlyForecast'
 import Forecast from './components/Forecast'
 import './App.css'
 
 function App() {
   const [city, setCity] = useState(panamaCities[0])
-  const { current, daily, loading, error, refetch } = useWeather(city.lat, city.lon)
+  const { current, daily, hourly, loading, error, refetch } = useWeather(city.lat, city.lon)
 
   const handleCitySelect = useCallback((c) => {
     setCity(c)
@@ -34,7 +35,7 @@ function App() {
           </h1>
           <CitySelector current={city.name} onSelect={handleCitySelect} />
         </div>
-        <p className="app-subtitle">Clima y pronóstico del tiempo en Panamá</p>
+        <p className="app-subtitle">{city.name} &bull; Clima y pronóstico del tiempo en Panamá</p>
       </header>
 
       <main className="app-main">
@@ -60,13 +61,14 @@ function App() {
         {!loading && !error && (
           <>
             <CurrentWeather data={current} />
+            <HourlyForecast hourly={hourly} />
             <Forecast daily={daily} />
           </>
         )}
       </main>
 
       <footer className="app-footer">
-        <p>Datos: Open-Meteo &bull; Hecho en 🇵🇦 Panamá</p>
+        <p>Datos: Open-Meteo &bull; Hecho en Panamá 🇵🇦</p>
       </footer>
     </div>
   )

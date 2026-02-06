@@ -31,11 +31,27 @@ export default function CurrentWeather({ data }) {
         </div>
         <div className="detail-item">
           <span className="detail-label">Viento</span>
-          <span className="detail-value">{Math.round(data.wind_speed_10m)} km/h {windDirection(data.wind_direction_10m)}</span>
+          <span className="detail-value">{Math.round(data.wind_speed_10m)} km/h</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Dirección</span>
+          <span className="detail-value">{windDirection(data.wind_direction_10m)}</span>
         </div>
         <div className="detail-item">
           <span className="detail-label">Precipitación</span>
           <span className="detail-value">{data.precipitation} mm</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Presión</span>
+          <span className="detail-value">{Math.round(data.surface_pressure)} hPa</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Índice UV</span>
+          <span className="detail-value">{data.uv_index?.toFixed(1)}</span>
+        </div>
+        <div className="detail-item">
+          <span className="detail-label">Nubosidad</span>
+          <span className="detail-value">{data.cloud_cover}%</span>
         </div>
       </div>
     </div>

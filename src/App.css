@@ -208,12 +208,73 @@
   gap: 4px;
 }
 
+/* Hourly Forecast */
+.hourly-forecast {
+  margin-top: 20px;
+}
+
+.hourly-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.hourly-item {
+  flex: 0 0 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
+}
+
+.hourly-time {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.hourly-temp {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.hourly-precip {
+  font-size: 10px;
+  color: var(--primary-light);
+}
+
+/* Forecast */
+.forecast {
+  margin-top: 24px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 12px;
+}
+
+.forecast-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .forecast-day {
   display: grid;
-  grid-template-columns: 80px 44px 1fr 70px 50px;
+  grid-template-columns: 70px 40px 1fr 70px 44px;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 10px 14px;
   background: var(--bg-card);
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow);
@@ -230,14 +291,30 @@
   color: var(--text-heading);
 }
 
+.forecast-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
 .forecast-desc {
   font-size: 13px;
   color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.forecast-extra {
+  font-size: 10px;
+  color: var(--text-secondary);
+  opacity: 0.7;
 }
 
 .forecast-temps {
   display: flex;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
   justify-content: flex-end;
 }
@@ -249,14 +326,15 @@
 }
 
 .forecast-min {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
 .forecast-precip {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--primary-light);
   text-align: right;
+  font-weight: 500;
 }
 
 /* States */
@@ -337,16 +415,25 @@
   }
 
   .forecast-day {
-    grid-template-columns: 70px 36px 1fr 55px 40px;
-    padding: 8px 12px;
-    gap: 6px;
+    grid-template-columns: 60px 36px 1fr 58px 38px;
+    padding: 8px 10px;
+    gap: 5px;
   }
 
   .forecast-day-name {
     font-size: 13px;
   }
 
+  .forecast-extra {
+    display: none;
+  }
+
   .city-selector {
     min-width: 160px;
+  }
+
+  .hourly-item {
+    flex: 0 0 62px;
+    padding: 8px 4px;
   }
 }
