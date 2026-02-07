@@ -2,6 +2,11 @@ import WeatherIcon from './WeatherIcon'
 
 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
+function localDateFromStr(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(y, m - 1, d)
+}
+
 export default function Forecast({ daily }) {
   if (!daily) return null
 
@@ -10,7 +15,7 @@ export default function Forecast({ daily }) {
       <span className="card-title">PRONÓSTICO DE 7 DÍAS</span>
       <div className="forecast-list">
         {daily.time.map((date, i) => {
-          const dayName = i === 0 ? 'Hoy' : dayNames[new Date(date).getDay()]
+          const dayName = i === 0 ? 'Hoy' : dayNames[localDateFromStr(date).getDay()]
           const max = Math.round(daily.temperature_2m_max[i])
           const min = Math.round(daily.temperature_2m_min[i])
           const precip = daily.precipitation_sum[i]
