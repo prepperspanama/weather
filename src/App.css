@@ -277,10 +277,10 @@
 
 .forecast-row {
   display: grid;
-  grid-template-columns: 50px 28px 1fr 48px 56px;
+  grid-template-columns: 48px 26px 1fr 40px 54px;
   align-items: center;
-  gap: 6px;
-  padding: 8px 0;
+  gap: 4px 6px;
+  padding: 6px 0 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -289,7 +289,7 @@
 }
 
 .forecast-day {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   color: var(--text-primary);
 }
@@ -298,17 +298,53 @@
   font-weight: 700;
 }
 
+.forecast-center {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.forecast-precip-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.forecast-precip-bar-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #60a5fa;
+  flex-shrink: 0;
+  min-width: 22px;
+}
+
+.forecast-precip-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(96, 165, 250, 0.15);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.forecast-precip-fill {
+  display: block;
+  height: 100%;
+  background: #60a5fa;
+  border-radius: 3px;
+  transition: width 0.3s;
+}
+
 .forecast-bar-wrap {
   display: flex;
   align-items: center;
-  padding: 0 2px;
 }
 
 .forecast-bar {
   position: relative;
   width: 100%;
   height: 4px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 4px;
   overflow: hidden;
 }
@@ -322,32 +358,67 @@
   min-width: 2px;
 }
 
-.forecast-precip-wrap {
-  text-align: right;
-}
-
-.forecast-precip {
-  font-size: 12px;
+.forecast-precip-amount {
+  font-size: 11px;
   color: #60a5fa;
   font-weight: 500;
+  text-align: center;
 }
 
 .forecast-temps {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   justify-content: flex-end;
+  align-items: baseline;
 }
 
 .forecast-max {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
 .forecast-min {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
+}
+
+.forecast-extra-row {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 2px;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.2s, max-height 0.2s, padding 0.2s;
+}
+
+.forecast-card:hover .forecast-extra-row {
+  opacity: 1;
+  max-height: 24px;
+}
+
+.forecast-card:hover .forecast-row {
+  padding-bottom: 2px;
+}
+
+.forecast-suntime,
+.forecast-wind,
+.forecast-uv {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.forecast-gust {
+  color: var(--text-tertiary);
+  opacity: 0.7;
 }
 
 /* States */
@@ -426,8 +497,13 @@
   }
 
   .forecast-row {
-    grid-template-columns: 42px 24px 1fr 42px 50px;
-    gap: 4px;
+    grid-template-columns: 40px 22px 1fr 36px 48px;
+    gap: 3px 4px;
+  }
+
+  .forecast-extra-row {
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .app-main {
