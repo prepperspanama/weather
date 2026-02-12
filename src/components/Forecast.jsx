@@ -81,22 +81,28 @@ export default function Forecast({ daily }) {
               <div className="forecast-extra-row">
                 {sunrise && sunset && (
                   <span className="forecast-suntime">
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
-                      <line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="4" strokeWidth="1.8" />
+                      <line x1="12" y1="2" x2="12" y2="4.5" />
+                      <line x1="12" y1="19.5" x2="12" y2="22" />
+                      <line x1="4.4" y1="4.4" x2="5.8" y2="5.8" />
+                      <line x1="18.2" y1="18.2" x2="19.6" y2="19.6" />
                     </svg>
                     {formatTime(sunrise)}
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="9" x2="12" y2="2"/>
-                      <line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/>
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M17 18a5 5 0 0 0-10 0" strokeWidth="1.8" />
+                      <line x1="12" y1="9" x2="12" y2="3" strokeWidth="1.8" />
+                      <line x1="5" y1="12" x2="7" y2="12" strokeWidth="1.2" opacity="0.5" />
+                      <line x1="17" y1="12" x2="19" y2="12" strokeWidth="1.2" opacity="0.5" />
                     </svg>
                     {formatTime(sunset)}
                   </span>
                 )}
                 <span className="forecast-wind">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 4a3 3 0 1 1 3 3H4" strokeWidth="1.8" />
+                    <path d="M10 20a3 3 0 1 0 3-3H4" strokeWidth="1.8" />
+                    <path d="M20 10a2.5 2.5 0 1 0-2.5 2.5H4" strokeWidth="1.8" />
                   </svg>
                   {Math.round(wind)} km/h {windDir(daily.wind_direction_10m_dominant?.[i])}
                   {gust && gust > wind + 5 && (
@@ -104,9 +110,12 @@ export default function Forecast({ daily }) {
                   )}
                 </span>
                 <span className="forecast-uv">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/>
-                    <line x1="12" y1="21" x2="12" y2="23"/>
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="4.5" strokeWidth="1.8" />
+                    <line x1="12" y1="1" x2="12" y2="3.5" strokeWidth="1.8" />
+                    <line x1="12" y1="20.5" x2="12" y2="23" strokeWidth="1.8" />
+                    <line x1="3" y1="12" x2="5.5" y2="12" strokeWidth="1.2" opacity="0.4" />
+                    <line x1="18.5" y1="12" x2="21" y2="12" strokeWidth="1.2" opacity="0.4" />
                   </svg>
                   UV {uv?.toFixed(1)}
                 </span>
