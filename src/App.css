@@ -259,6 +259,44 @@
   pointer-events: none;
 }
 
+/* Moon Phase Card */
+.moon-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-top: 10px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.moon-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.moon-visual {
+  flex-shrink: 0;
+}
+
+.moon-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.moon-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.moon-illumination {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
 /* Forecast Card */
 .forecast-card {
   background: var(--card-bg);

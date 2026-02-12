@@ -5,6 +5,7 @@ import CitySelector from './components/CitySelector'
 import CurrentWeather from './components/CurrentWeather'
 import HourlyForecast from './components/HourlyForecast'
 import Forecast from './components/Forecast'
+import MoonPhase from './components/MoonPhase'
 import './App.css'
 
 const gradients = [
@@ -67,6 +68,7 @@ function App() {
             <CurrentWeather data={current} daily={daily} />
             <HourlyForecast hourly={hourly} />
             <Forecast daily={daily} />
+            <MoonPhase />
           </>
         )}
       </main>
