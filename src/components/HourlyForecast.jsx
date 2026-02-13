@@ -19,7 +19,7 @@ export default function HourlyForecast({ hourly }) {
   const now = new Date()
   const panamaOffset = -5 * 60
   const localOffset = now.getTimezoneOffset()
-  const panamaNow = new Date(now.getTime() + (localOffset - panamaOffset) * 60000)
+  const panamaNow = new Date(now.getTime() + (localOffset + panamaOffset) * 60000)
   const currentPanamaHour = panamaNow.getHours()
   const currentPanamaDate = `${panamaNow.getFullYear()}-${String(panamaNow.getMonth() + 1).padStart(2, '0')}-${String(panamaNow.getDate()).padStart(2, '0')}`
 
