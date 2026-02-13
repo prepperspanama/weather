@@ -50,7 +50,7 @@ export default function Forecast({ daily }) {
           return (
             <div key={date} className={`forecast-row ${i === 0 ? 'today' : ''}`}>
               <span className="forecast-day">{dayName}</span>
-              <WeatherIcon code={daily.weather_code[i]} size={22} />
+              <WeatherIcon code={daily.weather_code[i]} isDay size={22} />
 
               <div className="forecast-center">
                 {precipProb > 0 && (
