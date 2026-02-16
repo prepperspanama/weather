@@ -259,6 +259,37 @@
   pointer-events: none;
 }
 
+.hourly-metrics {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-right: 16px;
+}
+
+.hourly-metrics::-webkit-scrollbar {
+  display: none;
+}
+
+.hourly-metric-btn {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.hourly-metric-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  color: var(--text-primary);
+}
+
 /* Moon Phase Card */
 .moon-card {
   background: var(--card-bg);
