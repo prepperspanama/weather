@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import WeatherIcon from './WeatherIcon'
 
 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
@@ -15,6 +16,13 @@ function formatTime(iso) {
   return `${hour12}:${String(min).padStart(2, '0')} ${period}`
 }
 
+function formatDuration(seconds) {
+  if (seconds == null) return ''
+  const h = Math.floor(seconds / 3600)
+  const m = Math.round((seconds % 3600) / 60)
+  return `${h}h ${m}min`
+}
+
 function windDir(deg) {
   const dirs = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW']
   if (deg == null) return ''
@@ -22,6 +30,7 @@ function windDir(deg) {
 }
 
 export default function Forecast({ daily }) {
+  const [expanded, setExpanded] = useState(null)
   if (!daily) return null
 
   const allMax = Math.max(...daily.temperature_2m_max)
@@ -30,7 +39,7 @@ export default function Forecast({ daily }) {
 
   return (
     <div className="forecast-card">
-      <span className="card-title">PRONÓSTICO DE 7 DÍAS</span>
+      <span className="card-title">PRONÓSTICO DE 10 DÍAS</span>
       <div className="forecast-list">
         {daily.time.map((date, i) => {
           const dayName = i === 0 ? 'Hoy' : dayNames[localDateFromStr(date).getDay()]
@@ -47,8 +56,18 @@ export default function Forecast({ daily }) {
           const left = Math.max(0, ((min - allMin) / range) * 100)
           const right = Math.max(0, ((allMax - max) / range) * 100)
 
+          const isExpanded = expanded === i
+          const daylight = daily.daylight_duration?.[i]
+
           return (
-            <div key={date} className={`forecast-row ${i === 0 ? 'today' : ''}`}>
+            <div
+              key={date}
+              className={`forecast-row ${i === 0 ? 'today' : ''} ${isExpanded ? 'expanded' : ''}`}
+              onClick={() => setExpanded(isExpanded ? null : i)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpanded(isExpanded ? null : i) }}
+            >
               <span className="forecast-day">{dayName}</span>
               <WeatherIcon code={daily.weather_code[i]} isDay size={22} />
 
@@ -78,7 +97,7 @@ export default function Forecast({ daily }) {
                 <span className="forecast-min">{min}°</span>
               </span>
 
-              <div className="forecast-extra-row">
+              <div className={`forecast-extra-row ${isExpanded ? 'visible' : ''}`}>
                 {sunrise && sunset && (
                   <span className="forecast-suntime">
                     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -96,6 +115,22 @@ export default function Forecast({ daily }) {
                       <line x1="17" y1="12" x2="19" y2="12" strokeWidth="1.2" opacity="0.5" />
                     </svg>
                     {formatTime(sunset)}
+                  </span>
+                )}
+                {daylight && (
+                  <span className="forecast-daylight">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="5" strokeWidth="1.8" />
+                      <line x1="12" y1="1" x2="12" y2="3" strokeWidth="1.8" />
+                      <line x1="12" y1="21" x2="12" y2="23" strokeWidth="1.8" />
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" strokeWidth="1.2" opacity="0.6" />
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" strokeWidth="1.2" opacity="0.6" />
+                      <line x1="1" y1="12" x2="3" y2="12" strokeWidth="1.2" opacity="0.6" />
+                      <line x1="21" y1="12" x2="23" y2="12" strokeWidth="1.2" opacity="0.6" />
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" strokeWidth="1.2" opacity="0.6" />
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" strokeWidth="1.2" opacity="0.6" />
+                    </svg>
+                    {formatDuration(daylight)}
                   </span>
                 )}
                 <span className="forecast-wind">
