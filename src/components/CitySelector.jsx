@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
 import { panamaCities } from '../utils/weatherCodes'
 
+const GPS_CITY = { name: 'Mi ubicación', lat: null, lon: null, isGps: true }
+
 export default function CitySelector({ current, onSelect }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [locating, setLocating] = useState(false)
+  const [gpsError, setGpsError] = useState(null)
   const ref = useRef(null)
 
   const filtered = panamaCities.filter((c) =>
@@ -17,6 +21,33 @@ export default function CitySelector({ current, onSelect }) {
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  function handleGps() {
+    if (!navigator.geolocation) {
+      setGpsError('GPS no disponible en este dispositivo')
+      return
+    }
+    setLocating(true)
+    setGpsError(null)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        onSelect({ name: 'Mi ubicación', lat: pos.coords.latitude, lon: pos.coords.longitude, isGps: true })
+        setOpen(false)
+        setQuery('')
+        setLocating(false)
+      },
+      (err) => {
+        const messages = {
+          1: 'Permiso de ubicación denegado',
+          2: 'Ubicación no disponible',
+          3: 'Tiempo de espera agotado',
+        }
+        setGpsError(messages[err.code] || 'Error al obtener ubicación')
+        setLocating(false)
+      },
+      { enableHighAccuracy: false, timeout: 10000 }
+    )
+  }
 
   return (
     <div className="city-selector" ref={ref}>
@@ -41,6 +72,18 @@ export default function CitySelector({ current, onSelect }) {
             className="city-search"
           />
           <div className="city-list">
+            {!query && (
+              <button
+                className={`city-option gps-option ${current === GPS_CITY.name ? 'active' : ''}`}
+                onClick={handleGps}
+                disabled={locating}
+              >
+                {locating ? 'Obteniendo ubicación...' : '📍 Mi ubicación'}
+              </button>
+            )}
+            {gpsError && (
+              <span className="city-no-results gps-error">{gpsError}</span>
+            )}
             {filtered.map((c) => (
               <button
                 key={c.name}
@@ -50,7 +93,7 @@ export default function CitySelector({ current, onSelect }) {
                 {c.name}
               </button>
             ))}
-            {filtered.length === 0 && (
+            {filtered.length === 0 && query && (
               <span className="city-no-results">Sin resultados</span>
             )}
           </div>
