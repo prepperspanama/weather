@@ -6,6 +6,7 @@ import CurrentWeather from './components/CurrentWeather'
 import HourlyForecast from './components/HourlyForecast'
 import Forecast from './components/Forecast'
 import MoonPhase from './components/MoonPhase'
+import AirQuality from './components/AirQuality'
 import './App.css'
 
 const gradients = [
@@ -26,7 +27,7 @@ function getGradient(code, isDay) {
 
 function App() {
   const [city, setCity] = useState(panamaCities[0])
-  const { current, daily, hourly, loading, error, refetch } = useWeather(city.lat, city.lon)
+  const { current, daily, hourly, airQuality, loading, error, refetch } = useWeather(city.lat, city.lon)
 
   const gradient = useMemo(() => {
     if (!current) return ['#0a1628', '#1a2744']
@@ -67,6 +68,7 @@ function App() {
           <>
             <CurrentWeather data={current} daily={daily} />
             <HourlyForecast hourly={hourly} />
+            <AirQuality data={airQuality} />
             <Forecast daily={daily} />
             <MoonPhase />
           </>
