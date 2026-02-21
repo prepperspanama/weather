@@ -1,10 +1,52 @@
+function dewPoint(temp, rh) {
+  const a = 17.27
+  const b = 237.7
+  const y = (a * temp) / (b + temp) + Math.log(rh / 100)
+  return Math.round((b * y) / (a - y) * 10) / 10
+}
+
+const uvLevels = [
+  { max: 2, label: 'Bajo', color: '#22c55e', msg: 'Sin protección necesaria' },
+  { max: 5, label: 'Moderado', color: '#eab308', msg: 'Protección solar recomendada' },
+  { max: 7, label: 'Alto', color: '#f97316', msg: 'Protección solar necesaria' },
+  { max: 10, label: 'Muy alto', color: '#ef4444', msg: 'Protección solar indispensable' },
+  { max: Infinity, label: 'Extremo', color: '#7c3aed', msg: 'Evitar exposición al sol' },
+]
+
+function getUvInfo(val) {
+  if (val == null) return null
+  return uvLevels.find((l) => val <= l.max)
+}
+
+const visibilityLevels = [
+  { min: 20, label: 'Excelente' },
+  { min: 10, label: 'Buena' },
+  { min: 4, label: 'Moderada' },
+  { min: 1, label: 'Mala' },
+  { min: 0, label: 'Muy mala' },
+]
+
+function getVisibilityLabel(km) {
+  if (km == null) return null
+  return visibilityLevels.find((l) => km >= l.min)?.label
+}
+
 export default function CurrentWeather({ data, daily }) {
   if (!data) return null
+
+  const temp = data.temperature_2m
+  const feels = data.apparent_temperature
+  const feelsDiff = temp - feels
+  const showFeelsLike = Math.abs(feelsDiff) > 3
+  const uvInfo = getUvInfo(data.uv_index)
+  const visKm = data.visibility ? data.visibility / 1000 : null
+  const visLabel = getVisibilityLabel(visKm)
+  const dew = data.relative_humidity_2m != null ? dewPoint(temp, data.relative_humidity_2m) : null
 
   return (
     <div className="current-section">
       <p className="current-condition">{getCondition(data.weather_code)}</p>
-      <p className="current-temp">{Math.round(data.temperature_2m)}°</p>
+      <p className="current-temp">{Math.round(temp)}°</p>
 
       {daily && (
         <p className="current-hilo">
@@ -14,14 +56,21 @@ export default function CurrentWeather({ data, daily }) {
         </p>
       )}
 
+      {showFeelsLike && (
+        <p className="current-feelslike">
+          Sensación térmica de {Math.round(feels)}°{feelsDiff > 0 ? ' (más fresco)' : ' (más cálido)'}
+        </p>
+      )}
+
       <div className="detail-grid">
         <div className="detail-card">
           <span className="detail-label">SENSACIÓN</span>
-          <p className="detail-value">{Math.round(data.apparent_temperature)}°C</p>
+          <p className="detail-value">{Math.round(feels)}°C</p>
         </div>
         <div className="detail-card">
           <span className="detail-label">HUMEDAD</span>
           <p className="detail-value">{data.relative_humidity_2m}%</p>
+          {dew != null && <span className="detail-sub">Rocío {dew}°</span>}
         </div>
         <div className="detail-card">
           <span className="detail-label">VIENTO</span>
@@ -33,7 +82,10 @@ export default function CurrentWeather({ data, daily }) {
         </div>
         <div className="detail-card">
           <span className="detail-label">ÍNDICE UV</span>
-          <p className="detail-value">{data.uv_index?.toFixed(1)}</p>
+          <p className="detail-value" style={uvInfo ? { color: uvInfo.color } : undefined}>
+            {data.uv_index?.toFixed(1)}
+          </p>
+          {uvInfo && <span className="detail-sub">{uvInfo.label}</span>}
         </div>
         <div className="detail-card">
           <span className="detail-label">NUBOSIDAD</span>
@@ -42,12 +94,18 @@ export default function CurrentWeather({ data, daily }) {
         <div className="detail-card">
           <span className="detail-label">PRECIPITACIÓN</span>
           <p className="detail-value">{data.precipitation} mm</p>
+          {data.weather_code != null && <span className="detail-sub">{precipType(data.weather_code)}</span>}
         </div>
         <div className="detail-card">
           <span className="detail-label">VISIBILIDAD</span>
-          <p className="detail-value">{data.visibility ? `${(data.visibility / 1000).toFixed(1)} km` : '--'}</p>
+          <p className="detail-value">{visKm ? `${visKm.toFixed(1)} km` : '--'}</p>
+          {visLabel && <span className="detail-sub">{visLabel}</span>}
         </div>
       </div>
+
+      {uvInfo && uvInfo.max > 5 && (
+        <p className="uv-notice">{uvInfo.msg}</p>
+      )}
     </div>
   )
 }
@@ -66,4 +124,17 @@ function getCondition(code) {
     95: 'Tormenta', 96: 'Tormenta con granizo', 99: 'Tormenta intensa',
   }
   return map[code] || ''
+}
+
+function precipType(code) {
+  if (code == null) return ''
+  if (code <= 1) return ''
+  if (code <= 3) return 'Posible lluvia'
+  if (code <= 48) return 'Niebla'
+  if (code <= 57) return 'Llovizna'
+  if (code <= 67) return 'Lluvia'
+  if (code <= 77) return 'Nieve'
+  if (code <= 82) return 'Chubascos'
+  if (code <= 86) return 'Chubascos de nieve'
+  return 'Tormenta'
 }
