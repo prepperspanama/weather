@@ -301,6 +301,22 @@
   pointer-events: none;
 }
 
+.hourly-sparkline-wrap {
+  width: 100%;
+  padding: 0 16px 8px;
+}
+
+.hourly-sparkline {
+  display: block;
+  width: 100%;
+  height: 40px;
+}
+
+.hourly-wind-dir {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
 .hourly-metrics {
   display: flex;
   gap: 6px;
