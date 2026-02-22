@@ -454,6 +454,34 @@
   color: var(--text-secondary);
 }
 
+.moon-events {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.moon-event {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.moon-event-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.moon-event-date {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
 /* Forecast Card */
 .forecast-card {
   background: var(--card-bg);

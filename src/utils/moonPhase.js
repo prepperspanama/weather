@@ -30,6 +30,22 @@ export function getMoonIllumination(phase) {
   return Math.round(((1 - Math.cos(phase * 2 * Math.PI)) / 2) * 100)
 }
 
+export function getNextFullMoon(date) {
+  const phase = getMoonPhase(date)
+  const daysUntil = ((0.5 - phase + 1) % 1) * 29.53058867
+  const next = new Date(date)
+  next.setDate(next.getDate() + Math.round(daysUntil))
+  return next
+}
+
+export function getNextNewMoon(date) {
+  const phase = getMoonPhase(date)
+  const daysUntil = ((1 - phase) % 1) * 29.53058867
+  const next = new Date(date)
+  next.setDate(next.getDate() + Math.round(daysUntil))
+  return next
+}
+
 export function getMoonPath(cx, cy, r, phase) {
   if (phase === 0.5 || (phase > 0.48 && phase < 0.52)) {
     return `M ${cx} ${cy - r} A ${r} ${r} 0 1 0 ${cx} ${cy + r} A ${r} ${r} 0 1 0 ${cx} ${cy - r} Z`
