@@ -649,7 +649,8 @@
   opacity: 0.7;
 }
 
-.forecast-daylight {
+.forecast-daylight,
+.forecast-precip-hours {
   display: inline-flex;
   align-items: center;
   gap: 3px;

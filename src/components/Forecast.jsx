@@ -58,6 +58,7 @@ export default function Forecast({ daily }) {
 
           const isExpanded = expanded === i
           const daylight = daily.daylight_duration?.[i]
+          const precipHours = daily.precipitation_hours?.[i]
 
           return (
             <div
@@ -131,6 +132,19 @@ export default function Forecast({ daily }) {
                       <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" strokeWidth="1.2" opacity="0.6" />
                     </svg>
                     {formatDuration(daylight)}
+                  </span>
+                )}
+                {precipHours != null && precipHours > 0 && (
+                  <span className="forecast-precip-hours">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M12 2v20M2 12h20" strokeWidth="1.5" opacity="0.5" />
+                      <path d="M7 7l10 10M17 7l-10 10" strokeWidth="1" opacity="0.3" />
+                      <line x1="6" y1="5" x2="8" y2="5" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="6" y1="19" x2="8" y2="19" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="16" y1="5" x2="18" y2="5" strokeWidth="1.5" strokeLinecap="round" />
+                      <line x1="16" y1="19" x2="18" y2="19" strokeWidth="1.5" strokeLinecap="round" />
+                    </svg>
+                    {precipHours}h
                   </span>
                 )}
                 <span className="forecast-wind">
