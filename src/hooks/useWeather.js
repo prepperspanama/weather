@@ -9,6 +9,7 @@ export function useWeather(lat, lon) {
   const [daily, setDaily] = useState(null)
   const [hourly, setHourly] = useState(null)
   const [airQuality, setAirQuality] = useState(null)
+  const [alerts, setAlerts] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const intervalRef = useRef(null)
@@ -25,6 +26,7 @@ export function useWeather(lat, lon) {
         daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,weather_code,sunrise,sunset,wind_speed_10m_max,wind_gusts_10m_max,wind_direction_10m_dominant,uv_index_max,precipitation_hours,daylight_duration,sunshine_duration',
         timezone: 'America/Panama',
         forecast_days: 10,
+        alerts: 'true',
       })
       const res = await fetch(`${BASE_URL}?${params}`)
       if (!res.ok) throw new Error('Error al obtener datos del clima')
@@ -32,6 +34,7 @@ export function useWeather(lat, lon) {
       setCurrent(data.current)
       setDaily(data.daily)
       setHourly(data.hourly)
+      if (data.alerts?.alert) setAlerts(data.alerts.alert)
     } catch (err) {
       setError(err.message)
     } finally {
@@ -78,5 +81,5 @@ export function useWeather(lat, lon) {
     fetchAirQuality()
   }, [fetchWeather, fetchAirQuality])
 
-  return { current, daily, hourly, airQuality, loading, error, refetch }
+  return { current, daily, hourly, airQuality, alerts, loading, error, refetch }
 }
