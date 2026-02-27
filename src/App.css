@@ -354,6 +354,64 @@
   height: 40px;
 }
 
+.weather-chart {
+  position: relative;
+  width: 100%;
+  padding: 0 16px 24px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.weather-chart-svg {
+  display: block;
+  width: 100%;
+  height: 100px;
+  cursor: crosshair;
+}
+
+.weather-chart-dot {
+  transition: opacity 0.15s;
+}
+
+.weather-chart:hover .weather-chart-dot {
+  opacity: 1;
+}
+
+.weather-chart-tooltip {
+  position: absolute;
+  top: -8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.weather-chart-tooltip-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.weather-chart-tooltip-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.weather-chart-xlabel {
+  position: absolute;
+  font-size: 9px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
 .hourly-wind-dir {
   font-size: 10px;
   color: var(--text-tertiary);

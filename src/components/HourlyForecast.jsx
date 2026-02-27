@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import WeatherIcon from './WeatherIcon'
+import WeatherChart from './WeatherChart'
 
 function formatTime(iso) {
   const d = new Date(iso.replace('T', 'T') + ':00')
@@ -8,33 +9,13 @@ function formatTime(iso) {
 
 const metrics = ['Temperatura', 'Sensación', 'Viento', 'UV', 'Humedad']
 
-function Sparkline({ data, height = 40 }) {
-  if (!data || data.length < 2) return null
-  const min = Math.min(...data)
-  const max = Math.max(...data)
-  const range = max - min || 1
-  const w = data.length * 20
-  const stepX = w / (data.length - 1)
-  const points = data.map((v, i) => {
-    const x = i * stepX
-    const y = height - ((v - min) / range) * (height - 4) - 2
-    return `${x},${y}`
-  })
-  return (
-    <div className="hourly-sparkline-wrap">
-      <svg viewBox={`0 0 ${w} ${height}`} className="hourly-sparkline" preserveAspectRatio="none">
-        <polyline
-          points={points.join(' ')}
-          fill="none"
-          stroke="rgba(255,255,255,0.2)"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    </div>
-  )
-}
+const chartColors = [
+  'rgba(255,255,255,0.3)',
+  'rgba(251, 191, 36, 0.5)',
+  'rgba(96, 165, 250, 0.5)',
+  'rgba(168, 85, 247, 0.5)',
+  'rgba(74, 222, 128, 0.5)',
+]
 
 export default function HourlyForecast({ hourly }) {
   const [metric, setMetric] = useState(0)
@@ -68,7 +49,18 @@ export default function HourlyForecast({ hourly }) {
     })
     .slice(0, 24)
 
-  const tempData = useMemo(() => hours.map((h) => h.temp), [hours])
+  function chartData() {
+    const key = ['temp', 'feelsLike', 'wind', 'uv', 'humidity'][metric]
+    return hours.map((h) => h[key])
+  }
+
+  function chartUnit() {
+    return ['°', '°', ' km/h', '', '%'][metric]
+  }
+
+  function chartLabels() {
+    return hours.map((h) => h.label)
+  }
 
   function metricValue(h) {
     switch (metric) {
@@ -95,7 +87,7 @@ export default function HourlyForecast({ hourly }) {
           </button>
         ))}
       </div>
-      {metric === 0 && <Sparkline data={tempData} />}
+      <WeatherChart data={chartData()} labels={chartLabels()} unit={chartUnit()} color={chartColors[metric]} />
       <div className="hourly-scroll">
         {hours.map((h) => {
           const isNow = h.dateStr === currentPanamaDate && h.hour === currentPanamaHour
