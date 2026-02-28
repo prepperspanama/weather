@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import WeatherIcon from './WeatherIcon'
+import WeatherChart from './WeatherChart'
 
 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
@@ -40,6 +41,13 @@ export default function Forecast({ daily }) {
   return (
     <div className="forecast-card">
       <span className="card-title">PRONÓSTICO DE 10 DÍAS</span>
+      <WeatherChart
+        data={daily.temperature_2m_max.map(Math.round)}
+        labels={daily.time.map((d, i) => i === 0 ? 'Hoy' : dayNames[localDateFromStr(d).getDay()].slice(0, 3))}
+        unit="°"
+        color="rgba(251, 191, 36, 0.5)"
+        height={80}
+      />
       <div className="forecast-list">
         {daily.time.map((date, i) => {
           const dayName = i === 0 ? 'Hoy' : dayNames[localDateFromStr(date).getDay()]
