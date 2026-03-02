@@ -8,6 +8,7 @@ import Forecast from './components/Forecast'
 import MoonPhase from './components/MoonPhase'
 import AirQuality from './components/AirQuality'
 import SevereAlertBanner from './components/SevereAlertBanner'
+import LocationMap from './components/LocationMap'
 import './App.css'
 
 const gradients = [
@@ -69,6 +70,7 @@ function App() {
           <>
             <SevereAlertBanner alerts={alerts} />
             <CurrentWeather data={current} daily={daily} />
+            <LocationMap lat={city.lat} lon={city.lon} name={city.name} />
             <HourlyForecast hourly={hourly} />
             <AirQuality data={airQuality} />
             <Forecast daily={daily} />
