@@ -31,7 +31,9 @@ function getVisibilityLabel(km) {
   return visibilityLevels.find((l) => km >= l.min)?.label
 }
 
-export default function CurrentWeather({ data, daily }) {
+import { convert, convertLabel } from '../utils/convert'
+
+export default function CurrentWeather({ data, daily, units }) {
   if (!data) return null
 
   const temp = data.temperature_2m
@@ -43,42 +45,48 @@ export default function CurrentWeather({ data, daily }) {
   const visLabel = getVisibilityLabel(visKm)
   const dew = data.relative_humidity_2m != null ? dewPoint(temp, data.relative_humidity_2m) : null
 
+  const tempUnit = convertLabel('temp', units.temp)
+  const windUnit = convertLabel('wind', units.wind)
+  const pressUnit = convertLabel('pressure', units.pressure)
+  const precipUnit = convertLabel('precip', units.precip)
+
   return (
     <div className="current-section">
       <p className="current-condition">{getCondition(data.weather_code)}</p>
-      <p className="current-temp">{Math.round(temp)}°</p>
+      <p className="current-temp">{convert(temp, 'temp', units.temp)}{tempUnit}</p>
 
       {daily && (
         <p className="current-hilo">
-          H: {Math.round(daily.temperature_2m_max[0])}°
+          H: {convert(daily.temperature_2m_max[0], 'temp', units.temp)}{tempUnit}
           <span className="hilo-sep"> </span>
-          L: {Math.round(daily.temperature_2m_min[0])}°
+          L: {convert(daily.temperature_2m_min[0], 'temp', units.temp)}{tempUnit}
         </p>
       )}
 
       {showFeelsLike && (
         <p className="current-feelslike">
-          Sensación térmica de {Math.round(feels)}°{feelsDiff > 0 ? ' (más fresco)' : ' (más cálido)'}
+          Sensación térmica de {convert(feels, 'temp', units.temp)}{tempUnit}
+          {feelsDiff > 0 ? ' (más fresco)' : ' (más cálido)'}
         </p>
       )}
 
       <div className="detail-grid">
         <div className="detail-card">
           <span className="detail-label">SENSACIÓN</span>
-          <p className="detail-value">{Math.round(feels)}°C</p>
+          <p className="detail-value">{convert(feels, 'temp', units.temp)}{tempUnit}</p>
+          {dew != null && <span className="detail-sub">Rocío {convert(dew, 'temp', units.temp)}{tempUnit}</span>}
         </div>
         <div className="detail-card">
           <span className="detail-label">HUMEDAD</span>
           <p className="detail-value">{data.relative_humidity_2m}%</p>
-          {dew != null && <span className="detail-sub">Rocío {dew}°</span>}
         </div>
         <div className="detail-card">
           <span className="detail-label">VIENTO</span>
-          <p className="detail-value">{Math.round(data.wind_speed_10m)} km/h</p>
+          <p className="detail-value">{convert(data.wind_speed_10m, 'wind', units.wind)}{windUnit}</p>
         </div>
         <div className="detail-card">
           <span className="detail-label">PRESIÓN</span>
-          <p className="detail-value">{Math.round(data.surface_pressure)} hPa</p>
+          <p className="detail-value">{convert(data.surface_pressure, 'pressure', units.pressure)}{pressUnit}</p>
         </div>
         <div className="detail-card">
           <span className="detail-label">ÍNDICE UV</span>
@@ -93,7 +101,7 @@ export default function CurrentWeather({ data, daily }) {
         </div>
         <div className="detail-card">
           <span className="detail-label">PRECIPITACIÓN</span>
-          <p className="detail-value">{data.precipitation} mm</p>
+          <p className="detail-value">{convert(data.precipitation, 'precip', units.precip)}{precipUnit}</p>
           {data.weather_code != null && <span className="detail-sub">{precipType(data.weather_code)}</span>}
         </div>
         <div className="detail-card">

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import WeatherIcon from './WeatherIcon'
 import WeatherChart from './WeatherChart'
+import { convert, convertLabel } from '../utils/convert'
 
 function formatTime(iso) {
   const d = new Date(iso.replace('T', 'T') + ':00')
@@ -17,7 +18,7 @@ const chartColors = [
   'rgba(74, 222, 128, 0.5)',
 ]
 
-export default function HourlyForecast({ hourly }) {
+export default function HourlyForecast({ hourly, units }) {
   const [metric, setMetric] = useState(0)
   if (!hourly) return null
 
@@ -64,9 +65,9 @@ export default function HourlyForecast({ hourly }) {
 
   function metricValue(h) {
     switch (metric) {
-      case 0: return h.temp != null ? `${h.temp}°` : null
-      case 1: return h.feelsLike != null ? `${h.feelsLike}°` : null
-      case 2: return h.wind != null ? `${h.wind} km/h` : null
+      case 0: return h.temp != null ? `${convert(h.temp, 'temp', units.temp)}${convertLabel('temp', units.temp)}` : null
+      case 1: return h.feelsLike != null ? `${convert(h.feelsLike, 'temp', units.temp)}${convertLabel('temp', units.temp)}` : null
+      case 2: return h.wind != null ? `${convert(h.wind, 'wind', units.wind)}${convertLabel('wind', units.wind)}` : null
       case 3: return h.uv != null ? h.uv.toFixed(1) : null
       case 4: return h.humidity != null ? `${h.humidity}%` : null
       default: return `${h.temp}°`

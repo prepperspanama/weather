@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import WeatherIcon from './WeatherIcon'
 import WeatherChart from './WeatherChart'
+import { convert, convertLabel } from '../utils/convert'
 
 const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
 
@@ -30,7 +31,7 @@ function windDir(deg) {
   return dirs[Math.round(deg / 22.5) % 16]
 }
 
-export default function Forecast({ daily }) {
+export default function Forecast({ daily, units }) {
   const [expanded, setExpanded] = useState(null)
   if (!daily) return null
 
@@ -42,17 +43,17 @@ export default function Forecast({ daily }) {
     <div className="forecast-card">
       <span className="card-title">PRONÓSTICO DE 10 DÍAS</span>
       <WeatherChart
-        data={daily.temperature_2m_max.map(Math.round)}
+        data={daily.temperature_2m_max.map((v) => convert(v, 'temp', units.temp))}
         labels={daily.time.map((d, i) => i === 0 ? 'Hoy' : dayNames[localDateFromStr(d).getDay()].slice(0, 3))}
-        unit="°"
+        unit={convertLabel('temp', units.temp)}
         color="rgba(251, 191, 36, 0.5)"
         height={80}
       />
       <div className="forecast-list">
         {daily.time.map((date, i) => {
           const dayName = i === 0 ? 'Hoy' : dayNames[localDateFromStr(date).getDay()]
-          const max = Math.round(daily.temperature_2m_max[i])
-          const min = Math.round(daily.temperature_2m_min[i])
+          const max = convert(daily.temperature_2m_max[i], 'temp', units.temp)
+          const min = convert(daily.temperature_2m_min[i], 'temp', units.temp)
           const precip = daily.precipitation_sum[i]
           const precipProb = daily.precipitation_probability_max[i]
           const wind = daily.wind_speed_10m_max[i]
@@ -98,12 +99,12 @@ export default function Forecast({ daily }) {
               </div>
 
               <span className="forecast-precip-amount">
-                {precip > 0 ? `${precip} mm` : ''}
+                {precip > 0 ? `${convert(precip, 'precip', units.precip)}${convertLabel('precip', units.precip)}` : ''}
               </span>
 
               <span className="forecast-temps">
-                <span className="forecast-max">{max}°</span>
-                <span className="forecast-min">{min}°</span>
+                <span className="forecast-max">{max}{convertLabel('temp', units.temp)}</span>
+                <span className="forecast-min">{min}{convertLabel('temp', units.temp)}</span>
               </span>
 
               <div className={`forecast-extra-row ${isExpanded ? 'visible' : ''}`}>
@@ -161,7 +162,7 @@ export default function Forecast({ daily }) {
                     <path d="M10 20a3 3 0 1 0 3-3H4" strokeWidth="1.8" />
                     <path d="M20 10a2.5 2.5 0 1 0-2.5 2.5H4" strokeWidth="1.8" />
                   </svg>
-                  {Math.round(wind)} km/h {windDir(daily.wind_direction_10m_dominant?.[i])}
+                  {convert(wind, 'wind', units.wind)}{convertLabel('wind', units.wind)} {windDir(daily.wind_direction_10m_dominant?.[i])}
                   {gust && gust > wind + 5 && (
                     <span className="forecast-gust"> racha {Math.round(gust)}</span>
                   )}
