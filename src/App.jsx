@@ -12,6 +12,7 @@ import AirQuality from './components/AirQuality'
 import SevereAlertBanner from './components/SevereAlertBanner'
 import LocationMap from './components/LocationMap'
 import UnitSettings from './components/UnitSettings'
+import AnimatedBackground from './components/AnimatedBackground'
 import './App.css'
 
 const gradients = [
@@ -57,6 +58,7 @@ function App() {
 
   return (
     <div className="app" style={{ background: `linear-gradient(180deg, ${gradient[0]} 0%, ${gradient[1]} 100%)` }}>
+      {current && <AnimatedBackground weatherCode={current.weather_code} isDay={current.is_day} />}
       <header className="app-header">
         <div className="header-row">
           {loc.locations.length > 1 && (
