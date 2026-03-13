@@ -12,7 +12,9 @@ import AirQuality from './components/AirQuality'
 import SevereAlertBanner from './components/SevereAlertBanner'
 import LocationMap from './components/LocationMap'
 import UnitSettings from './components/UnitSettings'
+import NotificationSettings from './components/NotificationSettings'
 import AnimatedBackground from './components/AnimatedBackground'
+import useNotifications from './hooks/useNotifications'
 import './App.css'
 
 const gradients = [
@@ -34,7 +36,9 @@ function getGradient(code, isDay) {
 function App() {
   const [city, setCity] = useState(panamaCities[0])
   const [showSettings, setShowSettings] = useState(false)
+  const [showNotifSettings, setShowNotifSettings] = useState(false)
   const { units, setUnit } = useUnits()
+  const notif = useNotifications(alerts)
   const loc = useLocations()
   const { current, daily, hourly, airQuality, alerts, loading, error, refetch } = useWeather(city.lat, city.lon)
 
@@ -87,6 +91,16 @@ function App() {
               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
             </svg>
           </button>
+          <button
+            className={`settings-btn ${notif.permission === 'granted' ? 'notif-on' : ''}`}
+            onClick={() => setShowNotifSettings(true)}
+            aria-label="Notificaciones"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+          </button>
           <button className="settings-btn" onClick={() => setShowSettings(true)} aria-label="Unidades">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="3"/>
@@ -96,6 +110,15 @@ function App() {
         </div>
       </header>
       {showSettings && <UnitSettings units={units} setUnit={setUnit} onClose={() => setShowSettings(false)} />}
+      {showNotifSettings && (
+        <NotificationSettings
+          permission={notif.permission}
+          prefs={notif.prefs}
+          requestPermission={notif.requestPermission}
+          togglePref={notif.togglePref}
+          onClose={() => setShowNotifSettings(false)}
+        />
+      )}
 
       <main className="app-main">
         {loading && (
