@@ -47,7 +47,15 @@ export default function useNotifications(alerts) {
       })
       n.onclick = () => window.focus()
     } catch {}
+
+    try { navigator.setAppBadge?.(alerts.length) } catch {}
   }, [alerts, permission, prefs.alerts, notifiedIds])
+
+  useEffect(() => {
+    if (!alerts || alerts.length === 0) {
+      try { navigator.clearAppBadge?.() } catch {}
+    }
+  }, [alerts])
 
   return { permission, prefs, requestPermission, togglePref }
 }
