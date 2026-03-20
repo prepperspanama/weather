@@ -52,14 +52,29 @@ const iconMap = {
   99: { day: thunderstormsDay, night: thunderstormsNight },
 }
 
+const descriptions = {
+  0: 'despejado', 1: 'mayormente despejado', 2: 'parcialmente nublado',
+  3: 'nublado', 45: 'niebla', 48: 'niebla',
+  51: 'llovizna', 53: 'llovizna', 55: 'llovizna',
+  56: 'llovizna helada', 57: 'llovizna helada',
+  61: 'lluvia ligera', 63: 'lluvia', 65: 'lluvia intensa',
+  66: 'lluvia helada', 67: 'lluvia helada',
+  71: 'nieve ligera', 73: 'nieve', 75: 'nieve intensa', 77: 'granos de nieve',
+  80: 'chubascos', 81: 'chubascos', 82: 'chubascos fuertes',
+  85: 'chubascos de nieve', 86: 'chubascos de nieve',
+  95: 'tormenta', 96: 'tormenta con granizo', 99: 'tormenta intensa',
+}
+
 export default function WeatherIcon({ code, isDay = true, size = 24 }) {
   const entry = iconMap[code] || iconMap[2]
   const src = isDay ? entry.day : entry.night
+  const period = isDay ? 'día' : 'noche'
+  const desc = descriptions[code] || 'clima'
 
   return (
     <img
       src={src}
-      alt=""
+      alt={`${desc} - ${period}`}
       width={size}
       height={size}
       style={{ display: 'block' }}

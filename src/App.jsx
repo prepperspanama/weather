@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { panamaCities } from './utils/weatherCodes'
 import { useWeather } from './hooks/useWeather'
 import useUnits from './hooks/useUnits'
@@ -14,6 +14,7 @@ import LocationMap from './components/LocationMap'
 import UnitSettings from './components/UnitSettings'
 import NotificationSettings from './components/NotificationSettings'
 import AnimatedBackground from './components/AnimatedBackground'
+import Skeleton from './components/Skeleton'
 import useNotifications from './hooks/useNotifications'
 import './App.css'
 
@@ -37,10 +38,13 @@ function App() {
   const [city, setCity] = useState(panamaCities[0])
   const [showSettings, setShowSettings] = useState(false)
   const [showNotifSettings, setShowNotifSettings] = useState(false)
+  const [pullDist, setPullDist] = useState(0)
   const { units, setUnit } = useUnits()
   const notif = useNotifications(alerts)
   const loc = useLocations()
   const { current, daily, hourly, airQuality, alerts, loading, error, refetch } = useWeather(city.lat, city.lon)
+  const pullStartY = useRef(0)
+  const mainRef = useRef(null)
 
   const gradient = useMemo(() => {
     if (!current) return ['#0a1628', '#1a2744']
@@ -59,6 +63,24 @@ function App() {
   }, [loc.current?.name])
 
   const isFav = loc.isFavorite(city.name)
+
+  const handleTouchStart = useCallback((e) => {
+    if (mainRef.current && mainRef.current.scrollTop <= 0) {
+      pullStartY.current = e.touches[0].clientY
+    }
+  }, [])
+
+  const handleTouchMove = useCallback((e) => {
+    if (!pullStartY.current) return
+    const dist = e.touches[0].clientY - pullStartY.current
+    if (dist > 0) setPullDist(Math.min(dist * 0.5, 80))
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    if (pullDist > 50) refetch()
+    setPullDist(0)
+    pullStartY.current = 0
+  }, [pullDist, refetch])
 
   return (
     <div className="app" style={{ background: `linear-gradient(180deg, ${gradient[0]} 0%, ${gradient[1]} 100%)` }}>
@@ -120,13 +142,23 @@ function App() {
         />
       )}
 
-      <main className="app-main">
-        {loading && (
-          <div className="state-message">
-            <div className="spinner" />
-            <p>Obteniendo datos del clima...</p>
+      <main
+        className="app-main"
+        ref={mainRef}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {pullDist > 0 && (
+          <div className="pull-indicator" style={{ height: pullDist, opacity: pullDist / 80 }}>
+            <div className={`pull-arrow ${pullDist > 50 ? 'ready' : ''}`}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="5 12 12 5 19 12"/>
+              </svg>
+            </div>
           </div>
         )}
+        {loading && <Skeleton />}
 
         {error && (
           <div className="state-message error">

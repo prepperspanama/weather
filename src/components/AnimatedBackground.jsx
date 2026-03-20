@@ -8,6 +8,8 @@ export default function AnimatedBackground({ weatherCode, isDay }) {
   const stateRef = useRef(null)
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')

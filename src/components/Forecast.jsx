@@ -76,6 +76,7 @@ export default function Forecast({ daily, units }) {
               onClick={() => setExpanded(isExpanded ? null : i)}
               role="button"
               tabIndex={0}
+              aria-expanded={isExpanded}
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpanded(isExpanded ? null : i) }}
             >
               <span className="forecast-day">{dayName}</span>
