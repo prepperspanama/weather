@@ -40,9 +40,9 @@ function App() {
   const [showNotifSettings, setShowNotifSettings] = useState(false)
   const [pullDist, setPullDist] = useState(0)
   const { units, setUnit } = useUnits()
-  const notif = useNotifications(alerts)
   const loc = useLocations()
   const { current, daily, hourly, airQuality, alerts, loading, error, refetch } = useWeather(city.lat, city.lon)
+  const notif = useNotifications(alerts)
   const pullStartY = useRef(0)
   const mainRef = useRef(null)
 

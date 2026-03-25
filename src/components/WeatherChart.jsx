@@ -40,90 +40,92 @@ export default function WeatherChart({ data, labels, unit = '', height = 100, co
   const showHover = hoverIdx != null && points[hoverIdx]
 
   return (
-    <div className="weather-chart" ref={ref}>
-      <svg
-        viewBox={`0 0 ${w} ${height}`}
-        className="weather-chart-svg"
-        preserveAspectRatio="none"
-        onMouseMove={handlePointer}
-        onMouseLeave={handleLeave}
-        onTouchMove={(e) => { e.preventDefault(); handlePointer(e.changedTouches[0]) }}
-        onTouchEnd={handleLeave}
-      >
-        <defs>
-          <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={color} stopOpacity="0.15" />
-            <stop offset="100%" stopColor={color} stopOpacity="0" />
-          </linearGradient>
-        </defs>
+    <div className="weather-chart">
+      <div className="weather-chart-inner" ref={ref}>
+        <svg
+          viewBox={`0 0 ${w} ${height}`}
+          className="weather-chart-svg"
+          preserveAspectRatio="none"
+          onMouseMove={handlePointer}
+          onMouseLeave={handleLeave}
+          onTouchMove={(e) => { e.preventDefault(); handlePointer(e.changedTouches[0]) }}
+          onTouchEnd={handleLeave}
+        >
+          <defs>
+            <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={color} stopOpacity="0.15" />
+              <stop offset="100%" stopColor={color} stopOpacity="0" />
+            </linearGradient>
+          </defs>
 
-        <path d={areaClose} fill="url(#areaGrad)" />
-        <path d={area} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d={areaClose} fill="url(#areaGrad)" />
+          <path d={area} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
 
-        {data.map((v, i) => (
-          <circle
-            key={i}
-            cx={points[i].x}
-            cy={points[i].y}
-            r="2"
-            fill={color}
-            opacity="0"
-            className="weather-chart-dot"
-          />
-        ))}
+          {data.map((v, i) => (
+            <circle
+              key={i}
+              cx={points[i].x}
+              cy={points[i].y}
+              r="2"
+              fill={color}
+              opacity="0"
+              className="weather-chart-dot"
+            />
+          ))}
+
+          {showHover && (
+            <>
+              <line
+                x1={points[hoverIdx].x}
+                y1={pad}
+                x2={points[hoverIdx].x}
+                y2={chartH + pad}
+                stroke="rgba(255,255,255,0.3)"
+                strokeWidth="1"
+                strokeDasharray="3,3"
+              />
+              <circle
+                cx={points[hoverIdx].x}
+                cy={points[hoverIdx].y}
+                r="5"
+                fill={color}
+                stroke="#fff"
+                strokeWidth="2"
+              />
+            </>
+          )}
+        </svg>
 
         {showHover && (
-          <>
-            <line
-              x1={points[hoverIdx].x}
-              y1={pad}
-              x2={points[hoverIdx].x}
-              y2={chartH + pad}
-              stroke="rgba(255,255,255,0.3)"
-              strokeWidth="1"
-              strokeDasharray="3,3"
-            />
-            <circle
-              cx={points[hoverIdx].x}
-              cy={points[hoverIdx].y}
-              r="5"
-              fill={color}
-              stroke="#fff"
-              strokeWidth="2"
-            />
-          </>
+          <div
+            className="weather-chart-tooltip"
+            style={{
+              left: `${(points[hoverIdx].x / w) * 100}%`,
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <span className="weather-chart-tooltip-val">
+              {data[hoverIdx]}{unit}
+            </span>
+            {labels?.[hoverIdx] && (
+              <span className="weather-chart-tooltip-label">{labels[hoverIdx]}</span>
+            )}
+          </div>
         )}
-      </svg>
 
-      {showHover && (
-        <div
-          className="weather-chart-tooltip"
-          style={{
-            left: `${(points[hoverIdx].x / w) * 100}%`,
-            transform: 'translateX(-50%)',
-          }}
-        >
-          <span className="weather-chart-tooltip-val">
-            {data[hoverIdx]}{unit}
+        {points.filter((_, i) => i % Math.max(1, Math.floor(data.length / 6)) === 0 || i === data.length - 1).map((p, i) => (
+          <span
+            key={i}
+            className="weather-chart-xlabel"
+            style={{
+              left: `${(p.x / w) * 100}%`,
+              bottom: '-18px',
+            }}
+          >
+            {p.label || ''}
           </span>
-          {labels?.[hoverIdx] && (
-            <span className="weather-chart-tooltip-label">{labels[hoverIdx]}</span>
-          )}
-        </div>
-      )}
-
-      {points.filter((_, i) => i % Math.max(1, Math.floor(data.length / 6)) === 0 || i === data.length - 1).map((p, i) => (
-        <span
-          key={i}
-          className="weather-chart-xlabel"
-          style={{
-            left: `${(p.x / w) * 100}%`,
-            bottom: '-18px',
-          }}
-        >
-          {p.label || ''}
-        </span>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
