@@ -31,6 +31,14 @@ function windDir(deg) {
   return dirs[Math.round(deg / 22.5) % 16]
 }
 
+function tempColor(temp, overallMin, overallMax) {
+  const t = (temp - overallMin) / (overallMax - overallMin || 1)
+  const r = Math.round(59 + (245 - 59) * t)
+  const g = Math.round(130 + (158 - 130) * t)
+  const b = Math.round(246 + (11 - 246) * t)
+  return `rgb(${r},${g},${b})`
+}
+
 export default function Forecast({ daily, units }) {
   const [expanded, setExpanded] = useState(null)
   if (!daily) return null
@@ -64,6 +72,8 @@ export default function Forecast({ daily, units }) {
 
           const left = Math.max(0, ((min - allMin) / range) * 100)
           const right = Math.max(0, ((allMax - max) / range) * 100)
+          const colorMin = tempColor(min, allMin, allMax)
+          const colorMax = tempColor(max, allMin, allMax)
 
           const isExpanded = expanded === i
           const daylight = daily.daylight_duration?.[i]
@@ -94,7 +104,7 @@ export default function Forecast({ daily, units }) {
 
                 <span className="forecast-bar-wrap">
                   <span className="forecast-bar">
-                    <span className="forecast-fill" style={{ left: `${left}%`, right: `${right}%` }} />
+                    <span className="forecast-fill" style={{ left: `${left}%`, right: `${right}%`, background: `linear-gradient(90deg, ${colorMin}, ${colorMax})` }} />
                   </span>
                 </span>
               </div>
