@@ -852,10 +852,10 @@
 
 .forecast-row {
   display: grid;
-  grid-template-columns: 48px 26px 1fr 40px 54px;
+  grid-template-columns: 44px 24px 1fr 52px;
   align-items: center;
   gap: 4px 6px;
-  padding: 6px 0 8px;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -876,14 +876,15 @@
 .forecast-center {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
   min-width: 0;
 }
 
 .forecast-precip-bar-wrap {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  min-height: 12px;
 }
 
 .forecast-precip-bar-label {
@@ -891,14 +892,15 @@
   font-weight: 600;
   color: #60a5fa;
   flex-shrink: 0;
-  min-width: 22px;
+  min-width: 26px;
+  line-height: 1;
 }
 
 .forecast-precip-bar {
   flex: 1;
-  height: 3px;
-  background: rgba(96, 165, 250, 0.15);
-  border-radius: 3px;
+  height: 4px;
+  background: rgba(96, 165, 250, 0.12);
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -906,7 +908,7 @@
   display: block;
   height: 100%;
   background: #60a5fa;
-  border-radius: 3px;
+  border-radius: 4px;
   transition: width 0.3s;
 }
 
@@ -933,30 +935,26 @@
   box-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
 }
 
-.forecast-precip-amount {
-  font-size: 11px;
-  color: #60a5fa;
-  font-weight: 500;
-  text-align: center;
-}
-
 .forecast-temps {
   display: flex;
-  gap: 4px;
-  justify-content: flex-end;
-  align-items: baseline;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  line-height: 1;
 }
 
 .forecast-max {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .forecast-min {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
+  line-height: 1.2;
 }
 
 .forecast-extra-row {
@@ -1235,7 +1233,7 @@
   }
 
   .forecast-row {
-    grid-template-columns: 40px 22px 1fr 36px 48px;
+    grid-template-columns: 38px 20px 1fr 46px;
     gap: 3px 4px;
   }
 
@@ -1268,7 +1266,7 @@
   }
 
   .forecast-row {
-    grid-template-columns: 56px 28px 1fr 44px 70px;
+    grid-template-columns: 52px 26px 1fr 60px;
   }
 
   .hourly-item {

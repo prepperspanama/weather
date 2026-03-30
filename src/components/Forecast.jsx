@@ -62,7 +62,6 @@ export default function Forecast({ daily, units }) {
           const dayName = i === 0 ? 'Hoy' : dayNames[localDateFromStr(date).getDay()]
           const max = convert(daily.temperature_2m_max[i], 'temp', units.temp)
           const min = convert(daily.temperature_2m_min[i], 'temp', units.temp)
-          const precip = daily.precipitation_sum[i]
           const precipProb = daily.precipitation_probability_max[i]
           const wind = daily.wind_speed_10m_max[i]
           const gust = daily.wind_gusts_10m_max[i]
@@ -93,14 +92,12 @@ export default function Forecast({ daily, units }) {
               <WeatherIcon code={daily.weather_code[i]} isDay size={22} />
 
               <div className="forecast-center">
-                {precipProb > 0 && (
-                  <span className="forecast-precip-bar-wrap">
-                    <span className="forecast-precip-bar-label">{precipProb}%</span>
-                    <span className="forecast-precip-bar">
-                      <span className="forecast-precip-fill" style={{ width: `${precipProb}%` }} />
-                    </span>
+                <span className="forecast-precip-bar-wrap">
+                  {precipProb > 0 && <span className="forecast-precip-bar-label">{precipProb}%</span>}
+                  <span className="forecast-precip-bar">
+                    <span className="forecast-precip-fill" style={{ width: `${precipProb}%` }} />
                   </span>
-                )}
+                </span>
 
                 <span className="forecast-bar-wrap">
                   <span className="forecast-bar">
@@ -109,14 +106,10 @@ export default function Forecast({ daily, units }) {
                 </span>
               </div>
 
-              <span className="forecast-precip-amount">
-                {precip > 0 ? `${convert(precip, 'precip', units.precip)}${convertLabel('precip', units.precip)}` : ''}
-              </span>
-
-              <span className="forecast-temps">
+              <div className="forecast-temps">
                 <span className="forecast-max">{max}{convertLabel('temp', units.temp)}</span>
                 <span className="forecast-min">{min}{convertLabel('temp', units.temp)}</span>
-              </span>
+              </div>
 
               <div className={`forecast-extra-row ${isExpanded ? 'visible' : ''}`}>
                 {sunrise && sunset && (
