@@ -852,10 +852,10 @@
 
 .forecast-row {
   display: grid;
-  grid-template-columns: 44px 24px 1fr 52px;
+  grid-template-columns: 40px 22px 1fr auto;
   align-items: center;
-  gap: 4px 6px;
-  padding: 8px 0;
+  gap: 8px;
+  padding: 9px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
@@ -875,46 +875,24 @@
 
 .forecast-center {
   display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 6px;
   min-width: 0;
 }
 
-.forecast-precip-bar-wrap {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 12px;
-}
-
-.forecast-precip-bar-label {
+.forecast-precip-badge {
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   color: #60a5fa;
   flex-shrink: 0;
-  min-width: 26px;
   line-height: 1;
-}
-
-.forecast-precip-bar {
-  flex: 1;
-  height: 4px;
-  background: rgba(96, 165, 250, 0.12);
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.forecast-precip-fill {
-  display: block;
-  height: 100%;
-  background: #60a5fa;
-  border-radius: 4px;
-  transition: width 0.3s;
 }
 
 .forecast-bar-wrap {
   display: flex;
   align-items: center;
+  flex: 1;
+  min-width: 0;
 }
 
 .forecast-bar {
@@ -937,24 +915,25 @@
 
 .forecast-temps {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: baseline;
   gap: 2px;
-  line-height: 1;
 }
 
 .forecast-max {
   font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
-  line-height: 1.2;
 }
 
 .forecast-min {
   font-size: 13px;
   font-weight: 500;
   color: var(--text-tertiary);
-  line-height: 1.2;
+}
+
+.forecast-temp-sep {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
 }
 
 .forecast-extra-row {
@@ -1233,8 +1212,17 @@
   }
 
   .forecast-row {
-    grid-template-columns: 38px 20px 1fr 46px;
-    gap: 3px 4px;
+    grid-template-columns: 36px 20px 1fr auto;
+    gap: 6px;
+    padding: 8px 0;
+  }
+
+  .forecast-max {
+    font-size: 14px;
+  }
+
+  .forecast-min {
+    font-size: 12px;
   }
 
   .forecast-extra-row {
@@ -1266,7 +1254,8 @@
   }
 
   .forecast-row {
-    grid-template-columns: 52px 26px 1fr 60px;
+    grid-template-columns: 52px 26px 1fr auto;
+    gap: 10px;
   }
 
   .hourly-item {

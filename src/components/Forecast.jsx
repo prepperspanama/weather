@@ -78,6 +78,8 @@ export default function Forecast({ daily, units }) {
           const daylight = daily.daylight_duration?.[i]
           const precipHours = daily.precipitation_hours?.[i]
 
+          const tempUnit = convertLabel('temp', units.temp)
+
           return (
             <div
               key={date}
@@ -89,16 +91,10 @@ export default function Forecast({ daily, units }) {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpanded(isExpanded ? null : i) }}
             >
               <span className="forecast-day">{dayName}</span>
-              <WeatherIcon code={daily.weather_code[i]} isDay size={22} />
+              <WeatherIcon code={daily.weather_code[i]} isDay size={20} />
 
               <div className="forecast-center">
-                <span className="forecast-precip-bar-wrap">
-                  {precipProb > 0 && <span className="forecast-precip-bar-label">{precipProb}%</span>}
-                  <span className="forecast-precip-bar">
-                    <span className="forecast-precip-fill" style={{ width: `${precipProb}%` }} />
-                  </span>
-                </span>
-
+                {precipProb > 0 && <span className="forecast-precip-badge">{precipProb}%</span>}
                 <span className="forecast-bar-wrap">
                   <span className="forecast-bar">
                     <span className="forecast-fill" style={{ left: `${left}%`, right: `${right}%`, background: `linear-gradient(90deg, ${colorMin}, ${colorMax})` }} />
@@ -107,8 +103,9 @@ export default function Forecast({ daily, units }) {
               </div>
 
               <div className="forecast-temps">
-                <span className="forecast-max">{max}{convertLabel('temp', units.temp)}</span>
-                <span className="forecast-min">{min}{convertLabel('temp', units.temp)}</span>
+                <span className="forecast-max">{max}{tempUnit}</span>
+                <span className="forecast-temp-sep">/</span>
+                <span className="forecast-min">{min}{tempUnit}</span>
               </div>
 
               <div className={`forecast-extra-row ${isExpanded ? 'visible' : ''}`}>
