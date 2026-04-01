@@ -31,21 +31,22 @@ function windDir(deg) {
   return dirs[Math.round(deg / 22.5) % 16]
 }
 
-function tempColor(temp, overallMin, overallMax) {
-  const t = (temp - overallMin) / (overallMax - overallMin || 1)
-  const r = Math.round(59 + (245 - 59) * t)
-  const g = Math.round(130 + (158 - 130) * t)
-  const b = Math.round(246 + (11 - 246) * t)
-  return `rgb(${r},${g},${b})`
+const uvLevels = [
+  { max: 2, label: 'Bajo' },
+  { max: 5, label: 'Moderado' },
+  { max: 7, label: 'Alto' },
+  { max: 10, label: 'Muy alto' },
+  { max: Infinity, label: 'Extremo' },
+]
+
+function uvLabel(val) {
+  if (val == null) return ''
+  return uvLevels.find((l) => val <= l.max)?.label || ''
 }
 
 export default function Forecast({ daily, units }) {
   const [expanded, setExpanded] = useState(null)
   if (!daily) return null
-
-  const allMax = Math.max(...daily.temperature_2m_max)
-  const allMin = Math.min(...daily.temperature_2m_min)
-  const range = allMax - allMin || 1
 
   return (
     <div className="forecast-card">
@@ -69,11 +70,6 @@ export default function Forecast({ daily, units }) {
           const sunrise = daily.sunrise?.[i]
           const sunset = daily.sunset?.[i]
 
-          const left = Math.max(0, ((min - allMin) / range) * 100)
-          const right = Math.max(0, ((allMax - max) / range) * 100)
-          const colorMin = tempColor(min, allMin, allMax)
-          const colorMax = tempColor(max, allMin, allMax)
-
           const isExpanded = expanded === i
           const daylight = daily.daylight_duration?.[i]
           const precipHours = daily.precipitation_hours?.[i]
@@ -92,92 +88,112 @@ export default function Forecast({ daily, units }) {
             >
               <span className="forecast-day">{dayName}</span>
               <WeatherIcon code={daily.weather_code[i]} isDay size={20} />
-
-              <div className="forecast-center">
-                {precipProb > 0 && <span className="forecast-precip-badge">{precipProb}%</span>}
-                <span className="forecast-bar-wrap">
-                  <span className="forecast-bar">
-                    <span className="forecast-fill" style={{ left: `${left}%`, right: `${right}%`, background: `linear-gradient(90deg, ${colorMin}, ${colorMax})` }} />
-                  </span>
-                </span>
-              </div>
-
-              <div className="forecast-temps">
+              <span className="forecast-temps">
                 <span className="forecast-max">{max}{tempUnit}</span>
                 <span className="forecast-temp-sep">/</span>
                 <span className="forecast-min">{min}{tempUnit}</span>
-              </div>
+              </span>
 
-              <div className={`forecast-extra-row ${isExpanded ? 'visible' : ''}`}>
-                {sunrise && sunset && (
-                  <span className="forecast-suntime">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="4" strokeWidth="1.8" />
-                      <line x1="12" y1="2" x2="12" y2="4.5" />
-                      <line x1="12" y1="19.5" x2="12" y2="22" />
-                      <line x1="4.4" y1="4.4" x2="5.8" y2="5.8" />
-                      <line x1="18.2" y1="18.2" x2="19.6" y2="19.6" />
-                    </svg>
-                    {formatTime(sunrise)}
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M17 18a5 5 0 0 0-10 0" strokeWidth="1.8" />
-                      <line x1="12" y1="9" x2="12" y2="3" strokeWidth="1.8" />
-                      <line x1="5" y1="12" x2="7" y2="12" strokeWidth="1.2" opacity="0.5" />
-                      <line x1="17" y1="12" x2="19" y2="12" strokeWidth="1.2" opacity="0.5" />
-                    </svg>
-                    {formatTime(sunset)}
-                  </span>
-                )}
-                {daylight && (
-                  <span className="forecast-daylight">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <circle cx="12" cy="12" r="5" strokeWidth="1.8" />
-                      <line x1="12" y1="1" x2="12" y2="3" strokeWidth="1.8" />
-                      <line x1="12" y1="21" x2="12" y2="23" strokeWidth="1.8" />
-                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" strokeWidth="1.2" opacity="0.6" />
-                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" strokeWidth="1.2" opacity="0.6" />
-                      <line x1="1" y1="12" x2="3" y2="12" strokeWidth="1.2" opacity="0.6" />
-                      <line x1="21" y1="12" x2="23" y2="12" strokeWidth="1.2" opacity="0.6" />
-                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" strokeWidth="1.2" opacity="0.6" />
-                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" strokeWidth="1.2" opacity="0.6" />
-                    </svg>
-                    {formatDuration(daylight)}
-                  </span>
-                )}
-                {precipHours != null && precipHours > 0 && (
-                  <span className="forecast-precip-hours">
-                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M12 2v20M2 12h20" strokeWidth="1.5" opacity="0.5" />
-                      <path d="M7 7l10 10M17 7l-10 10" strokeWidth="1" opacity="0.3" />
-                      <line x1="6" y1="5" x2="8" y2="5" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="6" y1="19" x2="8" y2="19" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="16" y1="5" x2="18" y2="5" strokeWidth="1.5" strokeLinecap="round" />
-                      <line x1="16" y1="19" x2="18" y2="19" strokeWidth="1.5" strokeLinecap="round" />
-                    </svg>
-                    {precipHours}h
-                  </span>
-                )}
-                <span className="forecast-wind">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 4a3 3 0 1 1 3 3H4" strokeWidth="1.8" />
-                    <path d="M10 20a3 3 0 1 0 3-3H4" strokeWidth="1.8" />
-                    <path d="M20 10a2.5 2.5 0 1 0-2.5 2.5H4" strokeWidth="1.8" />
-                  </svg>
-                  {convert(wind, 'wind', units.wind)}{convertLabel('wind', units.wind)} {windDir(daily.wind_direction_10m_dominant?.[i])}
-                  {gust && gust > wind + 5 && (
-                    <span className="forecast-gust"> racha {Math.round(gust)}</span>
+              <div className={`forecast-expanded ${isExpanded ? 'visible' : ''}`}>
+                <div className="fe-grid">
+                  {sunrise && (
+                    <div className="fe-item">
+                      <span className="fe-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="4" strokeWidth="1.8" />
+                          <line x1="12" y1="2" x2="12" y2="4.5" />
+                          <line x1="12" y1="19.5" x2="12" y2="22" />
+                          <line x1="4.4" y1="4.4" x2="5.8" y2="5.8" />
+                          <line x1="18.2" y1="18.2" x2="19.6" y2="19.6" />
+                        </svg>
+                      </span>
+                      <span className="fe-label">Salida</span>
+                      <span className="fe-value">{formatTime(sunrise)}</span>
+                    </div>
                   )}
-                </span>
-                <span className="forecast-uv">
-                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="4.5" strokeWidth="1.8" />
-                    <line x1="12" y1="1" x2="12" y2="3.5" strokeWidth="1.8" />
-                    <line x1="12" y1="20.5" x2="12" y2="23" strokeWidth="1.8" />
-                    <line x1="3" y1="12" x2="5.5" y2="12" strokeWidth="1.2" opacity="0.4" />
-                    <line x1="18.5" y1="12" x2="21" y2="12" strokeWidth="1.2" opacity="0.4" />
-                  </svg>
-                  UV {uv?.toFixed(1)}
-                </span>
+                  {sunset && (
+                    <div className="fe-item">
+                      <span className="fe-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M17 18a5 5 0 0 0-10 0" strokeWidth="1.8" />
+                          <line x1="12" y1="9" x2="12" y2="3" strokeWidth="1.8" />
+                          <line x1="5" y1="12" x2="7" y2="12" strokeWidth="1.2" opacity="0.5" />
+                          <line x1="17" y1="12" x2="19" y2="12" strokeWidth="1.2" opacity="0.5" />
+                        </svg>
+                      </span>
+                      <span className="fe-label">Puesta</span>
+                      <span className="fe-value">{formatTime(sunset)}</span>
+                    </div>
+                  )}
+                  {daylight && (
+                    <div className="fe-item">
+                      <span className="fe-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="12" cy="12" r="5" strokeWidth="1.8" />
+                          <line x1="12" y1="1" x2="12" y2="3" strokeWidth="1.8" />
+                          <line x1="12" y1="21" x2="12" y2="23" strokeWidth="1.8" />
+                          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" strokeWidth="1.2" opacity="0.6" />
+                          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" strokeWidth="1.2" opacity="0.6" />
+                        </svg>
+                      </span>
+                      <span className="fe-label">Luz</span>
+                      <span className="fe-value">{formatDuration(daylight)}</span>
+                    </div>
+                  )}
+                  <div className="fe-item">
+                    <span className="fe-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M12 4a3 3 0 1 1 3 3H4" strokeWidth="1.8" />
+                        <path d="M10 20a3 3 0 1 0 3-3H4" strokeWidth="1.8" />
+                      </svg>
+                    </span>
+                    <span className="fe-label">Viento</span>
+                    <span className="fe-value">
+                      {convert(wind, 'wind', units.wind)}{convertLabel('wind', units.wind)}
+                      <span className="fe-dir">{windDir(daily.wind_direction_10m_dominant?.[i])}</span>
+                      {gust && gust > wind + 5 && (
+                        <span className="fe-gust">Racha {Math.round(gust)}{convertLabel('wind', units.wind)}</span>
+                      )}
+                    </span>
+                  </div>
+                  <div className="fe-item">
+                    <span className="fe-icon">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="12" cy="12" r="4.5" strokeWidth="1.8" />
+                        <line x1="12" y1="1" x2="12" y2="3.5" strokeWidth="1.8" />
+                        <line x1="12" y1="20.5" x2="12" y2="23" strokeWidth="1.8" />
+                      </svg>
+                    </span>
+                    <span className="fe-label">UV</span>
+                    <span className="fe-value">{uv?.toFixed(1)} <span className="fe-sub">{uvLabel(uv)}</span></span>
+                  </div>
+                  {precipProb > 0 && (
+                    <div className="fe-item">
+                      <span className="fe-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M12 2a8 8 0 0 0-8 8c0 5 8 12 8 12s8-7 8-12a8 8 0 0 0-8-8z" strokeWidth="1.8" />
+                          <circle cx="12" cy="10" r="1.5" fill="currentColor" stroke="none" />
+                        </svg>
+                      </span>
+                      <span className="fe-label">Lluvia</span>
+                      <span className="fe-value">{precipProb}%</span>
+                    </div>
+                  )}
+                  {precipHours != null && precipHours > 0 && (
+                    <div className="fe-item">
+                      <span className="fe-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="6" y1="5" x2="8" y2="5" strokeWidth="1.5" strokeLinecap="round" />
+                          <line x1="6" y1="19" x2="8" y2="19" strokeWidth="1.5" strokeLinecap="round" />
+                          <line x1="16" y1="5" x2="18" y2="5" strokeWidth="1.5" strokeLinecap="round" />
+                          <line x1="16" y1="19" x2="18" y2="19" strokeWidth="1.5" strokeLinecap="round" />
+                        </svg>
+                      </span>
+                      <span className="fe-label">Horas lluvia</span>
+                      <span className="fe-value">{precipHours}h</span>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           )
