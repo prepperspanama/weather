@@ -31,7 +31,20 @@ function getVisibilityLabel(km) {
   return visibilityLevels.find((l) => km >= l.min)?.label
 }
 
+import WeatherIcon from './WeatherIcon'
 import { convert, convertLabel } from '../utils/convert'
+
+function animClass(code) {
+  if (code == null) return ''
+  if (code === 0) return 'anim-clear'
+  if (code <= 2) return 'anim-partly-cloudy'
+  if (code === 3) return 'anim-cloudy'
+  if (code <= 48) return 'anim-fog'
+  if (code <= 57) return 'anim-drizzle'
+  if (code <= 67 || (code >= 80 && code <= 82)) return 'anim-rain'
+  if (code <= 77) return 'anim-snow'
+  return 'anim-thunder'
+}
 
 export default function CurrentWeather({ data, daily, units }) {
   if (!data) return null
@@ -52,7 +65,12 @@ export default function CurrentWeather({ data, daily, units }) {
 
   return (
     <div className="current-section">
-      <p className="current-condition">{getCondition(data.weather_code)}</p>
+      <div className="current-condition-wrap">
+        <span className={`weather-icon-anim ${animClass(data.weather_code)}`}>
+          <WeatherIcon code={data.weather_code} isDay={data.is_day} size={36} />
+        </span>
+        <p className="current-condition">{getCondition(data.weather_code)}</p>
+      </div>
       <p className="current-temp">{convert(temp, 'temp', units.temp)}{tempUnit}</p>
 
       {daily && (
