@@ -75,9 +75,9 @@ export default function CurrentWeather({ data, daily, units }) {
 
       {daily && (
         <p className="current-hilo">
-          H: {convert(daily.temperature_2m_max[0], 'temp', units.temp)}{tempUnit}
+          Máx: {convert(daily.temperature_2m_max[0], 'temp', units.temp)}{tempUnit}
           <span className="hilo-sep"> </span>
-          L: {convert(daily.temperature_2m_min[0], 'temp', units.temp)}{tempUnit}
+          Mín: {convert(daily.temperature_2m_min[0], 'temp', units.temp)}{tempUnit}
         </p>
       )}
 
