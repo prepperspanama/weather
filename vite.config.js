@@ -13,7 +13,7 @@ export default defineConfig({
         name: 'Clima Panamá',
         short_name: 'ClimaPA',
         description: 'Clima y pronóstico del tiempo en Panamá',
-        theme_color: '#0a3d6b',
+        theme_color: '#0a1628',
         background_color: '#0a1628',
         display: 'standalone',
         display_override: ['standalone', 'minimal-ui'],
@@ -23,7 +23,8 @@ export default defineConfig({
         lang: 'es',
         categories: ['weather', 'news', 'utilities'],
         icons: [
-          { src: '/icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml' },
+          { src: '/icons/icon-192.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'any' },
+          { src: '/icons/icon-192-maskable.svg', sizes: '192x192', type: 'image/svg+xml', purpose: 'maskable' },
           { src: '/icons/icon-512.svg', sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' },
         ],
       },
