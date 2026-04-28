@@ -1015,6 +1015,10 @@
   flex-shrink: 0;
 }
 
+.moon-event-icon img {
+  display: block;
+}
+
 .moon-event-info {
   display: flex;
   flex-direction: column;

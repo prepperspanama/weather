@@ -1,4 +1,23 @@
 import { useMemo } from 'react'
+import moonNew from '@meteocons/svg-static/fill/moon-new.svg'
+import moonWaxingCrescent from '@meteocons/svg-static/fill/moon-waxing-crescent.svg'
+import moonFirstQuarter from '@meteocons/svg-static/fill/moon-first-quarter.svg'
+import moonWaxingGibbous from '@meteocons/svg-static/fill/moon-waxing-gibbous.svg'
+import moonFull from '@meteocons/svg-static/fill/moon-full.svg'
+import moonWaningGibbous from '@meteocons/svg-static/fill/moon-waning-gibbous.svg'
+import moonLastQuarter from '@meteocons/svg-static/fill/moon-last-quarter.svg'
+import moonWaningCrescent from '@meteocons/svg-static/fill/moon-waning-crescent.svg'
+
+const moonIcons = {
+  'Luna nueva': moonNew,
+  'Luna creciente': moonWaxingCrescent,
+  'Cuarto creciente': moonFirstQuarter,
+  'Luna gibosa creciente': moonWaxingGibbous,
+  'Luna llena': moonFull,
+  'Luna gibosa menguante': moonWaningGibbous,
+  'Cuarto menguante': moonLastQuarter,
+  'Luna menguante': moonWaningCrescent,
+}
 
 function formatDate(d) {
   return d.toLocaleDateString('es-PA', { day: 'numeric', month: 'short' })
@@ -32,25 +51,6 @@ function getMoonIllumination(phase) {
   return Math.round(((1 - Math.cos(phase * 2 * Math.PI)) / 2) * 100)
 }
 
-function getMoonPath(cx, cy, r, phase) {
-  if (phase === 0.5 || (phase > 0.48 && phase < 0.52)) {
-    return `M ${cx} ${cy - r} A ${r} ${r} 0 1 0 ${cx} ${cy + r} A ${r} ${r} 0 1 0 ${cx} ${cy - r} Z`
-  }
-  const theta = phase * 2 * Math.PI
-  const rx = Math.abs(Math.sin(theta)) * r
-  if (rx < 0.5) {
-    if (phase < 0.5) return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} L ${cx} ${cy - r} Z`
-    return `M ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r} L ${cx} ${cy - r} Z`
-  }
-  const outerSweep = phase < 0.5 ? 1 : 0
-  const termSweep = phase < 0.5 ? 0 : 1
-  return [
-    `M ${cx} ${cy - r}`,
-    `A ${r} ${r} 0 0 ${outerSweep} ${cx} ${cy + r}`,
-    `A ${rx} ${r} 0 0 ${termSweep} ${cx} ${cy - r}`, 'Z',
-  ].join(' ')
-}
-
 function getNextEvent(date, target) {
   const phase = getMoonPhase(date)
   const days = ((target - phase + 1) % 1) * 29.53058867
@@ -63,10 +63,11 @@ export default function MoonPhase() {
   const data = useMemo(() => {
     const now = new Date()
     const p = getMoonPhase(now)
+    const name = getMoonName(p)
     return {
-      name: getMoonName(p),
+      name,
       illumination: getMoonIllumination(p),
-      path: getMoonPath(50, 50, 42, p),
+      icon: moonIcons[name],
       nextFull: getNextEvent(now, 0.5),
       nextNew: getNextEvent(now, 0),
     }
@@ -77,18 +78,13 @@ export default function MoonPhase() {
       <span className="card-title">FASE LUNAR</span>
       <div className="moon-body">
         <div className="moon-visual">
-          <svg width="90" height="90" viewBox="0 0 100 100">
-            <defs>
-              <radialGradient id="moon-glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#fef3c7" stopOpacity="0.08" />
-                <stop offset="100%" stopColor="#fef3c7" stopOpacity="0" />
-              </radialGradient>
-            </defs>
-            <circle cx="50" cy="50" r="48" fill="url(#moon-glow)" />
-            <circle cx="50" cy="50" r="42" fill="#1a2332" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
-            <path d={data.path} fill="#fef3c7" opacity="0.92" />
-            <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1" />
-          </svg>
+          <img
+            src={data.icon}
+            alt={data.name}
+            width={80}
+            height={80}
+            style={{ display: 'block' }}
+          />
         </div>
         <div className="moon-info">
           <span className="moon-name">{data.name}</span>
@@ -100,14 +96,18 @@ export default function MoonPhase() {
       </div>
       <div className="moon-events">
         <div className="moon-event">
-          <span className="moon-event-icon">🌕</span>
+          <span className="moon-event-icon">
+            <img src={moonFull} alt="" width={24} height={24} style={{ display: 'block' }} />
+          </span>
           <div className="moon-event-info">
             <span className="moon-event-label">Luna llena</span>
             <span className="moon-event-date">{formatDate(data.nextFull)}</span>
           </div>
         </div>
         <div className="moon-event">
-          <span className="moon-event-icon">🌑</span>
+          <span className="moon-event-icon">
+            <img src={moonNew} alt="" width={24} height={24} style={{ display: 'block' }} />
+          </span>
           <div className="moon-event-info">
             <span className="moon-event-label">Luna nueva</span>
             <span className="moon-event-date">{formatDate(data.nextNew)}</span>
