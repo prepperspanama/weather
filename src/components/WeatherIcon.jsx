@@ -65,13 +65,25 @@ const descriptions = {
   95: 'tormenta', 96: 'tormenta con granizo', 99: 'tormenta intensa',
 }
 
-export default function WeatherIcon({ code, isDay = true, size = 24 }) {
+export default function WeatherIcon({ code, isDay = true, size = 24, animated = false }) {
   const entry = iconMap[code] || iconMap[2]
   const src = isDay ? entry.day : entry.night
   const period = isDay ? 'día' : 'noche'
   const desc = descriptions[code] || 'clima'
 
-  return (
+  function animClass(c) {
+    if (c == null) return ''
+    if (c === 0) return 'anim-clear'
+    if (c <= 2) return 'anim-partly-cloudy'
+    if (c === 3) return 'anim-cloudy'
+    if (c <= 48) return 'anim-fog'
+    if (c <= 57) return 'anim-drizzle'
+    if (c <= 67 || (c >= 80 && c <= 82)) return 'anim-rain'
+    if (c <= 77) return 'anim-snow'
+    return 'anim-thunder'
+  }
+
+  const img = (
     <img
       src={src}
       alt={`${desc} - ${period}`}
@@ -79,5 +91,13 @@ export default function WeatherIcon({ code, isDay = true, size = 24 }) {
       height={size}
       style={{ display: 'block' }}
     />
+  )
+
+  if (!animated) return img
+
+  return (
+    <span className={`weather-icon-anim ${animClass(code)}`}>
+      {img}
+    </span>
   )
 }

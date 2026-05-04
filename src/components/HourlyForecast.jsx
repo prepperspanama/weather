@@ -95,7 +95,7 @@ export default function HourlyForecast({ hourly, units }) {
           return (
             <div key={h.time} className={`hourly-item ${isNow ? 'now' : ''}`}>
               <span className="hourly-time">{isNow ? 'Ahora' : h.label}</span>
-              <WeatherIcon code={h.code} isDay={h.hour >= 6 && h.hour < 18} size={26} />
+              <WeatherIcon code={h.code} isDay={h.hour >= 6 && h.hour < 18} size={26} animated />
               <span className="hourly-temp">{metricValue(h)}</span>
               {metric === 0 && h.precip != null && h.precip > 0 && (
                 <span className="hourly-precip">{h.precip}%</span>

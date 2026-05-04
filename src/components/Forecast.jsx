@@ -87,7 +87,7 @@ export default function Forecast({ daily, units }) {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setExpanded(isExpanded ? null : i) }}
             >
               <span className="forecast-day">{dayName}</span>
-              <WeatherIcon code={daily.weather_code[i]} isDay size={20} />
+              <WeatherIcon code={daily.weather_code[i]} isDay size={20} animated />
               <span className="forecast-temps">
                 <span className="forecast-max">{max}{tempUnit}</span>
                 <span className="forecast-temp-sep">/</span>
