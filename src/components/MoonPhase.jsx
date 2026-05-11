@@ -89,9 +89,6 @@ export default function MoonPhase() {
         <div className="moon-info">
           <span className="moon-name">{data.name}</span>
           <span className="moon-illumination">{data.illumination}% iluminada</span>
-          <div className="moon-phase-bar">
-            <div className="moon-phase-dot" style={{ left: `${data.illumination}%` }} />
-          </div>
         </div>
       </div>
       <div className="moon-events">
