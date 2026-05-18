@@ -186,9 +186,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <span>Open-Meteo</span>
-        <span className="dot">·</span>
-        <span>Panamá 🇵🇦</span>
+        <span>Hecho con ❤️ en Panamá 🇵🇦</span>
       </footer>
     </div>
   )
